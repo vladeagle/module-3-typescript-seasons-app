@@ -18,13 +18,17 @@ function renderItem(item) {
   const li = document.createElement('li')
 
   if (audio.canPlayType('audio/mpeg')) {
-    audio.src = `./assets/sounds/${item.name}.mp3`
+    audio.src = item.audioSrc
     audio.setAttribute('controls', true)
     audio.volume = .5
-    item.audio = audio
+    // console.log(audio)
+    // console.log(item.audio)
+    // item.audio = audio
+    // Object.assign(item.audio, audio)
+    // console.log(item.audio)
   }
 
-  icon.src = `./assets/icons/${item.name}.svg`
+  icon.src = item.icon
   li.className = 'seasons-app__list-item'
   li.style.backgroundImage = `url(${`./assets/images/${item.name}-bg.jpg`})`
   li.addEventListener('click', () => onAudioPlaybackToggle(item))
@@ -52,8 +56,8 @@ function onAudioPlaybackToggle(item) {
     subtitle.innerHTML = item.title
     item.audio.volume = volumeInput.value / 100
 
-    const inactiveItems = data.filter(el => el.id !== item.id)
-    inactiveItems.forEach(oItem => {
+    const inactiveItems = data.filter((el) => el.id !== item.id)
+    inactiveItems.forEach((oItem) => {
       oItem.active = false
       oItem.audio.currentTime = 0
       oItem.audio.pause()
@@ -62,7 +66,7 @@ function onAudioPlaybackToggle(item) {
 }
 
 function onVolumeChange(event) {
-  const activeItem = data.filter(el => el.active)[0]
+  const activeItem = data.filter((el) => el.active)[0]
   activeItem.audio.volume = event.currentTarget.value / 100
 }
 
