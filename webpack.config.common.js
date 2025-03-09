@@ -1,16 +1,19 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const path = require('path');
-const distPath = path.resolve(__dirname, 'dist');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path')
+const distPath = path.resolve(__dirname, 'dist')
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: './index.js',
+  entry: './index.ts',
   output: {
     filename: '[name].[contenthash].js',
     path: distPath,
     clean: true,
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -20,13 +23,13 @@ module.exports = {
       patterns: [
         {
           from: path.resolve(__dirname, 'public/favicon.ico'),
-          to: distPath
+          to: distPath,
         },
         {
           from: path.resolve(__dirname, 'src/assets'),
-          to: `${distPath}/assets`
+          to: `${distPath}/assets`,
         },
-      ]
+      ],
     }),
     new MiniCssExtractPlugin(),
   ],
@@ -34,24 +37,22 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.s[ac]ss$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
+          'css-loader',
           {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugin: [
-                  require('postcss-preset-env')
-                ]
-              }
-            }
+                plugin: [require('postcss-preset-env')],
+              },
+            },
           },
-          "sass-loader",
+          'sass-loader',
         ],
       },
       {
@@ -73,6 +74,11 @@ module.exports = {
           filename: 'assets/sounds/[name][ext]',
         },
       },
+      {
+        test: /\.[tj]sx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ],
-  }
+  },
 }
