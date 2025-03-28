@@ -1,8 +1,9 @@
 import data from './data'
 import './index.scss'
+import { ISeasonItem } from './interfaces/season-item.interface'
 
 const app = document.querySelector('#app')
-const backgroundEl = document.querySelector('#background')
+const backgroundEl = document.querySelector('#background') as HTMLElement
 const listEl = document.querySelector('#list')
 const docTitle = document.title
 const subtitle = document.querySelector('#subtitle')
@@ -12,20 +13,16 @@ volumeInput.type = 'range'
 volumeInput.className = 'seasons-app__volume-input'
 volumeInput.addEventListener('input', (event) => onVolumeChange(event))
 
-function renderItem(item) {
+function renderItem(item: ISeasonItem) {
   const audio = document.createElement('audio')
   const icon = document.createElement('img')
   const li = document.createElement('li')
 
   if (audio.canPlayType('audio/mpeg')) {
     audio.src = item.audioSrc
-    audio.setAttribute('controls', true)
-    audio.volume = .5
-    // console.log(audio)
-    // console.log(item.audio)
-    // item.audio = audio
-    // Object.assign(item.audio, audio)
-    // console.log(item.audio)
+    audio.setAttribute('controls', 'true')
+    audio.volume = 0.5
+    item.audio = audio
   }
 
   icon.src = item.icon
@@ -39,8 +36,8 @@ function renderItem(item) {
   app.append(volumeInput)
 }
 
-function onAudioPlaybackToggle(item) {
-  if (item.audio.readyState !== 4) {
+function onAudioPlaybackToggle(item: ISeasonItem) {
+  if (item.audio?.readyState !== 4) {
     subtitle.innerHTML = 'Звук не готов'
     return
   }
@@ -54,10 +51,10 @@ function onAudioPlaybackToggle(item) {
     item.active = true
     document.title = docTitle + ' | ' + item.title
     subtitle.innerHTML = item.title
-    item.audio.volume = volumeInput.value / 100
+    item.audio.volume = Number(volumeInput.value) / 100
 
-    const inactiveItems = data.filter((el) => el.id !== item.id)
-    inactiveItems.forEach((oItem) => {
+    const inactiveItems: ISeasonItem[] = data.filter((el) => el.id !== item.id)
+    inactiveItems.forEach((oItem: ISeasonItem) => {
       oItem.active = false
       oItem.audio.currentTime = 0
       oItem.audio.pause()
@@ -65,9 +62,10 @@ function onAudioPlaybackToggle(item) {
   }
 }
 
-function onVolumeChange(event) {
-  const activeItem = data.filter((el) => el.active)[0]
-  activeItem.audio.volume = event.currentTarget.value / 100
+function onVolumeChange(event: Event) {
+  const activeItem: ISeasonItem = data.filter((el) => el.active)[0]
+  activeItem.audio.volume =
+    Number((event.currentTarget as HTMLInputElement).value) / 100
 }
 
 data.forEach(renderItem)
